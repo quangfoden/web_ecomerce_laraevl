@@ -1,0 +1,62 @@
+/* Container của từng bài viết */
+.news-item {
+    background-color: #fff; /* Nền trắng */
+    border-radius: 8px; /* Bo góc */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng hover */
+    overflow: hidden; /* Đảm bảo nội dung không tràn */
+}
+
+/* Hiệu ứng hover cho bài viết */
+.news-item:hover {
+    transform: scale(1.05); /* Phóng to nhẹ khi hover */
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Đổ bóng đậm hơn khi hover */
+}
+
+/* Liên kết bài viết */
+.news-link {
+    display: block;
+    text-decoration: none; /* Loại bỏ gạch chân */
+    color: inherit; /* Giữ nguyên màu chữ */
+}
+
+/* Hình ảnh bài viết */
+.news-image {
+    width: 100%;
+    border-top-left-radius: 8px; /* Bo góc trên trái */
+    border-top-right-radius: 8px; /* Bo góc trên phải */
+    aspect-ratio: 2/1; 
+}
+
+/* Nội dung bài viết */
+.news-content {
+    padding: 16px; /* Khoảng cách bên trong */
+}
+.news-content p:hover {
+    color: #fe980f;
+}
+
+/* Tiêu đề bài viết */
+.news-title {
+    font-size: 18px; /* Kích thước chữ */
+    font-weight: 600; /* Chữ đậm */
+    color: #333; /* Màu chữ đậm */
+    margin-bottom: 8px; /* Khoảng cách dưới */
+}
+.news-title:hover {
+   color: #fe980f;
+}
+
+/* Ngày đăng bài viết */
+.news-date {
+    font-size: 14px; /* Kích thước chữ nhỏ */
+    color: #888; /* Màu chữ xám nhạt */
+    margin-bottom: 8px; /* Khoảng cách dưới */
+}
+
+/* Nội dung tóm tắt bài viết */
+.news-excerpt {
+    font-size: 16px; /* Kích thước chữ */
+    color: #555; /* Màu chữ xám trung bình */
+    line-height: 1.5; /* Khoảng cách dòng */
+}

@@ -1,0 +1,206 @@
+/* Footer Styles */
+.footer {
+    background-color: #222; /* Nền màu đen */
+    color: #fff; /* Màu chữ trắng */
+    padding-top: 10px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.footer a {
+    color: #fff; 
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: #FE980F;
+}
+
+.footer a:hover i{
+    color:#222;
+}
+
+.footer h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    color: #FE980F; /* Màu cam nổi bật */
+}
+
+.footer .footer-widget {
+    margin-bottom: 20px;
+}
+
+.footer .footer-widget ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer .footer-widget ul li {
+    margin-bottom: 10px;
+}
+
+.footer .footer-widget ul li a {
+    color: #fff;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.footer .footer-widget ul li a:hover {
+    color: #FE980F; /* Màu cam khi hover */
+}
+
+.footer .footer-mailchimp input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.footer .footer-mailchimp button {
+    background-color: #FE980F;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.footer .footer-mailchimp button:hover {
+    background-color: #feb47b; /* Màu cam nhạt hơn khi hover */
+}
+
+.footer .footer-social {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.footer .footer-social li {
+    list-style: none;
+}
+
+.footer .footer-social li a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.footer .footer-social li a:hover {
+    background-color: #FE980F; /* Màu cam khi hover */
+    transform: scale(1.1); /* Phóng to nhẹ khi hover */
+}
+
+.copyright {
+    background-color: #111; 
+    padding: 10px 0;
+    text-align: center;
+    font-size: 15px;
+    color: #aaa;
+}
+
+.copyright a {
+    color: #FE980F;
+    text-decoration: none;
+}
+
+.copyright a:hover {
+    color: #feb47b;
+}
+
+/* Container của các biểu tượng liên hệ */
+.fixed-icons {
+    position: fixed;
+    bottom: 16px; /* Cách đáy 16px */
+    left: 16px; /* Cách trái 16px */
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Khoảng cách giữa các biểu tượng */
+    z-index: 50; /* Đảm bảo nằm trên các thành phần khác */
+}
+
+/* Biểu tượng liên hệ chung */
+.fixed-icons a {
+    background-color: #28a745; /* Màu nền mặc định (xanh lá cho điện thoại) */
+    color: #fff; /* Màu chữ trắng */
+    padding: 16px; /* Khoảng cách bên trong */
+    border-radius: 50%; /* Bo tròn hoàn toàn */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* Loại bỏ gạch chân */
+    transition: transform 0.3s ease, background-color 0.3s ease; /* Hiệu ứng hover */
+    animation: bounce 2s infinite; /* Hiệu ứng nhảy */
+}
+
+/* Biểu tượng Zalo */
+.fixed-icons a.zalo {
+    background-color: #0078ff; /* Màu xanh dương cho Zalo */
+}
+
+.fixed-icons a i,
+.fixed-icons a img {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.fixed-icons a:hover {
+    transform: scale(1.1); 
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Nút Quay Lại Đầu Trang */
+#backToTop {
+    position: fixed;
+    bottom: 80px;
+    right: 16px; 
+    background-color: #333; 
+    color: #fff; 
+    padding: 12px; 
+    border-radius: 50%; /* Bo tròn hoàn toàn */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 999;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    border: none;
+}
+
+/* Hiển thị nút khi cần */
+#backToTop.show {
+    display: block; /* Hiển thị nút */
+}
+
+/* Hiệu ứng hover */
+#backToTop:hover {
+    background-color: #555; /* Màu nền xám nhạt hơn khi hover */
+    transform: scale(1.1); /* Phóng to nhẹ khi hover */
+}
+
+/* Biểu tượng mũi tên */
+#backToTop i {
+    font-size: 20px; /* Kích thước biểu tượng */
+}

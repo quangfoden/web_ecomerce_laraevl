@@ -16,8 +16,6 @@ class HomeController extends Controller
             ->take(10) 
             ->get();
             $news = News::latest()->take(10)->get();
-            $title='Sản phẩm mới';
-            $newstitle = "Tin tức mới";
-            return view('home', compact('products', 'news','title','newstitle'));
+            return view('home', compact('products', 'news'));
     }
 }

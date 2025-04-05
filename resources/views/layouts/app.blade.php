@@ -15,11 +15,16 @@
             display: none !important;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <!-- SwiperJS CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Font Awesome 6 Free CDN -->
 
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 </head>
+
 <body>
     @include('layouts.navigation')
 
@@ -29,22 +34,22 @@
     @include('layouts.footer')
 
     <!-- Biểu tượng liên hệ -->
-    <div class="fixed bottom-4 left-4 flex flex-col space-y-4 z-50">
+    <div class="fixed-icons">
         <!-- Icon Điện thoại -->
-        <a href="tel:0377456265" 
-           class="bg-green-500 text-white p-4 rounded-full shadow-lg animate-bounce hover:scale-110 transition transform">
+        <a href="tel:0377456265"
+            class="bg-green-500 text-white p-4 rounded-full shadow-lg animate-bounce hover:scale-110 transition transform">
             <i class="fas fa-phone-alt text-2xl"></i>
         </a>
         <!-- Icon Zalo -->
-        <a href="https://zalo.me/0377456265" target="_blank" 
-           class="bg-blue-500 text-white p-4 rounded-full shadow-lg animate-bounce hover:scale-110 transition transform">
+        <a href="https://zalo.me/0377456265" style="background: #3476ef;" target="_blank"
+            class="bg-blue-500 text-white p-4 rounded-full shadow-lg animate-bounce hover:scale-110 transition transform">
             <img src="{{ asset('img/icon-zalo.svg') }}" alt="Zalo" class="w-6 h-6">
         </a>
     </div>
 
     <!-- Nút Quay Lại Đầu Trang -->
-    <button id="backToTop" 
-            class="hidden fixed bottom-20 right-4 bg-gray-800 text-white p-3 rounded-full shadow-lg hover:bg-gray-700 transition transform hover:scale-110 z-50">
+    <button id="backToTop"
+        class="">
         <i class="fas fa-arrow-up text-xl"></i>
     </button>
 
@@ -55,15 +60,15 @@
         x-transition
         x-cloak
         @notify.window="show($event.detail.message, $event.detail.type || 'success')"
-        class="fixed w-[400px] left-1/2 -ml-[200px] top-16 py-2 px-4 pb-4 text-white"
-        :class="type === 'success' ? 'bg-emerald-500' : 'bg-red-500'">
-        <div class="font-semibold" x-text="message"></div>
+        class="toast-container"
+        :class="type === 'success' ? 'toast-success' : 'toast-error'">
+        <div class="toast-message" x-text="message"></div>
         <button
             @click="close"
-            class="absolute flex items-center justify-center right-2 top-2 w-[30px] h-[30px] rounded-full hover:bg-black/10 transition-colors">
+            class="toast-close-btn">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
+                class="toast-close-icon"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -77,7 +82,7 @@
         <!-- Progress -->
         <div>
             <div
-                class="absolute left-0 bottom-0 right-0 h-[6px] bg-black/10"
+                class="toast-progress"
                 :style="{'width': `${percent}%`}"></div>
         </div>
     </div>
@@ -86,10 +91,15 @@
 
 <!-- SwiperJS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
 <!-- Script for Back to Top Button -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
         const backToTopButton = document.getElementById("backToTop");
 
         // Hiển thị nút khi cuộn xuống
@@ -112,5 +122,29 @@
 </script>
 <!-- SwiperJS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+    window.addEventListener('scroll', function() {
+        const header = document.getElementById('header-middle');
+        if (window.scrollY > 100) { // 100 là khoảng cách scroll bạn muốn
+            header.classList.add('sticky');
+        } else {
+            header.classList.remove('sticky');
+        }
+    });
+</script>
+
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({
+        duration: 1000, // thời gian chạy animation (ms)
+        easing: 'ease-in-out', // kiểu easing
+        once: true, // animation chỉ chạy 1 lần
+    });
+</script>
 
 </html>
