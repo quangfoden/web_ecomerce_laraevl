@@ -279,7 +279,9 @@ a#scrollUp i{
     background-color: #fff;
 }
 
-
+.nav.navbar-nav{
+  min-width: 400px !important;
+}
 .nav.navbar-nav > li:hover > ul.sub-menu{
   display: flex;
   -webkit-animation: fadeInUp 400ms;

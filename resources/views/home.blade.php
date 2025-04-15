@@ -41,18 +41,28 @@ $categoryList = \App\Models\Category::getActiveAsTree();
     </div>
 
     <!-- Danh mục sản phẩm -->
+    <div class="section pb-0">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12">
+                @include('partials.categorybox', ['categories' => $categoryList])
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="section">
         <div class="container">
             <div class="row">
-                <div class="col-sm-3">
-                    @include('partials.sidecategory', ['categories' => $categoryList])
-                </div>
-                <div class="col-sm-9 padding-right">
+                <div class="col-sm-12">
                     @include('partials.features-product', ['products' => $products,'title'=>'Sản phẩm mới'])
                 </div>
             </div>
         </div>
     </div>
+
+    @include('components.product-banner')
+
+    @include('components.policy')
 
     <!-- News -->
     <div class="section">
@@ -63,6 +73,7 @@ $categoryList = \App\Models\Category::getActiveAsTree();
              </div>
         </div>
     </div>
+
 </x-app-layout>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script>

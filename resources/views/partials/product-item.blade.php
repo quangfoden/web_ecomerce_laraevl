@@ -7,7 +7,7 @@
                         'price' => $product->price,
                         'addToCartUrl' => route('cart.add', $product)
                     ]) }})"
-    class="product-image-wrapper">
+    class="product-image-wrapper" data-aos="fade-up">
     <div class="single-products">
         <div class="productinfo text-center">
             <img src="{{$product->image}}" alt="{{ $product->title }}" />
@@ -18,7 +18,9 @@
         </div>
         <div class="product-overlay">
             <div class="overlay-content">
-                <h2>{{$product->title}}</h2>
+                <a href="{{ route('product.view', $product->slug) }}">
+                    <h2>{{$product->title}}</h2>
+                </a>
                 <p>{{ number_format($product->price, 0, ',', '.') }} đ</p>
                 <a href="javascript:void(0)" @click="addToCart()" class="btn btn-default add-to-cart"><i
                         class="fa fa-shopping-cart"></i>Thêm vào giỏ hàng</a>

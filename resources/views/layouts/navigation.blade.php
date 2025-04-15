@@ -57,8 +57,8 @@ $categoryList = \App\Models\Category::getActiveAsTree();
                                     </li>
                                     <li><a href="{{ route('news.index') }}" class="mainmenu {{ Request::is('news') ? 'active' : '' }}">Bài viết</a>
                                     </li>
-                                    <li><a class="mainmenu" href="contact-us.html">Giới thiệu</a></li>
-                                    <li><a class="mainmenu" href="contact-us.html">Liên hệ</a></li>
+                                    <li><a class="mainmenu" href="{{ route('about') }}">Giới thiệu</a></li>
+                                    <li><a class="mainmenu" href="{{ route('support') }}">Liên hệ</a></li>
                                 </ul>
                             </div>
                         </div>
