@@ -17,9 +17,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('order_id')->references('id')->on('orders');
             $table->foreignId('product_id')->references('id')->on('products');
+            $table->unsignedBigInteger('size_id')->nullable(); 
             $table->integer('quantity');
             $table->decimal('unit_price');
             $table->timestamps();
+            $table->foreign('size_id')->references('id')->on('sizes')->onDelete('set null');
         });
     }
 

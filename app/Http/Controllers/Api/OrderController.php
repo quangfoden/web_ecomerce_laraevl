@@ -38,12 +38,14 @@ class OrderController extends Controller
         return OrderListResource::collection($query);
     }
 
+
     public function view(Order $order)
     {
         $order->load('items.product');
 
         return new OrderResource($order);
     }
+
 
     public function getStatuses()
     {

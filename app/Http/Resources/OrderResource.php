@@ -35,7 +35,11 @@ class OrderResource extends JsonResource
                     'slug' => $item->product->slug,
                     'title' => $item->product->title,
                     'image' => $item->product->image,
-                ]
+                ],
+                'size' => $item->size ? [
+                    'id' => $item->size->id,
+                    'name' => $item->size->name,
+                ] : null, // Nếu không có size, trả về null
             ]),
             'customer' => [
                 'id' => $this->user->id,

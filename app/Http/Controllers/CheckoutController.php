@@ -26,6 +26,7 @@ class CheckoutController extends Controller
         /** @var \App\Models\User $user */
         $user = $request->user();
 
+        // Kiểm tra thông tin địa chỉ của khách hàng
         $customer = $user->customer;
         if (!$customer->billingAddress || !$customer->shippingAddress) {
             return redirect()->route('profile')->with('error', 'Vui lòng cung cấp thông tin địa chỉ của bạn trước.');
@@ -33,6 +34,7 @@ class CheckoutController extends Controller
 
         Stripe::setApiKey(config('services.stripe.secret'));
 
+        // Lấy sản phẩm và giỏ hàng
         [$products, $cartItems] = Cart::getProductsAndCartItems();
 
         $orderItems = [];
@@ -41,58 +43,63 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
 
-        foreach ($products as $product) {
-            $quantity = $cartItems[$product->id]['quantity'];
-            if ($product->quantity !== null && $product->quantity < $quantity) {
-                $message = match ($product->quantity) {
-                    0 => 'Sản phẩm "' . $product->title . '" đã hết hàng',
-                    1 => 'Chỉ còn lại 1 sản phẩm "' . $product->title,
-                    default => 'Chỉ có ' . $product->quantity . ' các mặt hàng còn lại cho sản phẩm "' . $product->title,
-                };
-                return redirect()->back()->with('error', $message);
-            }
-        }
-
-        foreach ($products as $product) {
-            $quantity = $cartItems[$product->id]['quantity'];
-            $totalPrice += $product->price * $quantity;
-            $lineItems[] = [
-                'price_data' => [
-                    'currency' => 'vnd',
-                    'product_data' => [
-                        'name' => $product->title,
-                        'images' => $product->url ? [$product->url] : []
-                    ],
-                    'unit_amount' => (int) ($product->price),
-                ],
-                'quantity' => $quantity,
-            ];
-            $orderItems[] = [
-                'product_id' => $product->id,
-                'quantity' => $quantity,
-                'unit_price' => $product->price
-            ];
-
-            if ($product->quantity !== null) {
-                $product->quantity -= $quantity;
-                $product->save();
-            }
-        }
-        //        dd(route('checkout.failure', [], true));
-
-        //        dd(route('checkout.success', [], true) . '?session_id={CHECKOUT_SESSION_ID}');
-
-        $session = \Stripe\Checkout\Session::create([
-            'line_items' => $lineItems,
-            'mode' => 'payment',
-            'customer_creation' => 'always',
-            'success_url' => route('checkout.success', [], true) . '?session_id={CHECKOUT_SESSION_ID}',
-            'cancel_url' => route('checkout.failure', [], true),
-        ]);
-
         try {
+            // Kiểm tra tồn kho và chuẩn bị dữ liệu đơn hàng
+            foreach ($products as $product) {
+                $cartItem = $cartItems[$product->id];
+                $quantity = $cartItem['quantity'];
+                $sizeId = $cartItem['size_id'] ?? null;
 
-            // Create Order
+                // Kiểm tra tồn kho
+                if ($product->quantity !== null && $product->quantity < $quantity) {
+                    $message = match ($product->quantity) {
+                        0 => 'Sản phẩm "' . $product->title . '" đã hết hàng',
+                        1 => 'Chỉ còn lại 1 sản phẩm "' . $product->title,
+                        default => 'Chỉ có ' . $product->quantity . ' sản phẩm còn lại cho "' . $product->title,
+                    };
+                    return redirect()->back()->with('error', $message);
+                }
+
+                // Tính tổng tiền
+                $totalPrice += $product->price * $quantity;
+
+                // Chuẩn bị dữ liệu cho Stripe
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'vnd',
+                        'product_data' => [
+                            'name' => $product->title,
+                            'images' => $product->url ? [$product->url] : [],
+                        ],
+                        'unit_amount' => (int) ($product->price), // Stripe yêu cầu giá trị tính bằng cent
+                    ],
+                    'quantity' => $quantity,
+                ];
+
+                // Chuẩn bị dữ liệu cho OrderItem
+                $orderItems[] = [
+                    'product_id' => $product->id,
+                    'size_id' => $sizeId,
+                    'quantity' => $quantity,
+                    'unit_price' => $product->price,
+                ];
+
+                // Cập nhật tồn kho sản phẩm
+                if ($product->quantity !== null) {
+                    $product->quantity -= $quantity;
+                    $product->save();
+                }
+            }
+
+            // Tạo phiên thanh toán Stripe
+            $session = \Stripe\Checkout\Session::create([
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => route('checkout.success', [], true) . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('checkout.failure', [], true),
+            ]);
+
+            // Tạo đơn hàng
             $orderData = [
                 'total_price' => $totalPrice,
                 'status' => OrderStatus::Unpaid,
@@ -101,13 +108,13 @@ class CheckoutController extends Controller
             ];
             $order = Order::create($orderData);
 
-            // Create Order Items
+            // Tạo các mục trong đơn hàng
             foreach ($orderItems as $orderItem) {
                 $orderItem['order_id'] = $order->id;
                 OrderItem::create($orderItem);
             }
 
-            // Create Payment
+            // Tạo thanh toán
             $paymentData = [
                 'order_id' => $order->id,
                 'amount' => $totalPrice,
@@ -115,20 +122,21 @@ class CheckoutController extends Controller
                 'type' => 'cc',
                 'created_by' => $user->id,
                 'updated_by' => $user->id,
-                'session_id' => $session->id
+                'session_id' => $session->id,
             ];
             Payment::create($paymentData);
+
+            DB::commit();
+
+            // Xóa giỏ hàng
+            CartItem::where(['user_id' => $user->id])->delete();
+
+            return redirect($session->url);
         } catch (\Exception $e) {
             DB::rollBack();
-
             Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
-            throw $e;
+            return redirect()->back()->with('error', 'Đã xảy ra lỗi trong quá trình thanh toán.');
         }
-
-        DB::commit();
-        CartItem::where(['user_id' => $user->id])->delete();
-
-        return redirect($session->url);
     }
 
     public function success(Request $request)
@@ -151,9 +159,11 @@ class CheckoutController extends Controller
             if (!$payment) {
                 throw new NotFoundHttpException();
             }
+
             if ($payment->status === PaymentStatus::Pending->value) {
                 $this->updateOrderAndSession($payment);
             }
+
             $customer = \Stripe\Customer::retrieve($session->customer);
 
             return view('checkout.success', compact('customer'));
@@ -183,7 +193,6 @@ class CheckoutController extends Controller
                         //                        'images' => [$product->image]
                     ],
                     'unit_amount' => (int) ($item->unit_price),
-                    
                 ],
                 'quantity' => $item->quantity,
             ];
@@ -253,9 +262,8 @@ class CheckoutController extends Controller
         try {
             $payment->status = PaymentStatus::Paid->value;
             $payment->update();
-
+    
             $order = $payment->order;
-
             $order->status = OrderStatus::Paid->value;
             $order->update();
         } catch (\Exception $e) {
@@ -263,12 +271,12 @@ class CheckoutController extends Controller
             Log::critical(__METHOD__ . ' method does not work. ' . $e->getMessage());
             throw $e;
         }
-
+    
         DB::commit();
-
+    
         try {
             $adminUsers = User::where('is_admin', 1)->get();
-
+    
             foreach ([...$adminUsers, $order->user] as $user) {
                 Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
             }
@@ -276,4 +284,6 @@ class CheckoutController extends Controller
             Log::critical('Email sending does not work. ' . $e->getMessage());
         }
     }
+
+  
 }

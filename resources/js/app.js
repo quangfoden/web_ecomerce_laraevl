@@ -56,22 +56,28 @@ document.addEventListener("alpine:init", async () => {
   Alpine.data("productItem", (product) => {
     return {
       product,
+      selectedSize: null,
+ 
       addToCart(quantity = 1) {
-        post(this.product.addToCartUrl, {quantity})
-          .then(result => {
-            this.$dispatch('cart-change', {count: result.count})
-            this.$dispatch("notify", {
-              message: "Thêm vào giỏ hàng thành công",
-            });
-          })
-          .catch(response => {
-            console.log(response);
-            this.$dispatch('notify', {
-              message: response.message || 'Server Error. Please try again.',
-              type: 'error'
+
+        post(this.product.addToCartUrl, {
+            size_id: this.selectedSize, // Gửi size được chọn
+            quantity,
+        })
+            .then((result) => {
+                this.$dispatch("cart-change", { count: result.count });
+                this.$dispatch("notify", {
+                    message: "Thêm vào giỏ hàng thành công",
+                });
             })
-          })
-      },
+            .catch((response) => {
+                console.error(response);
+                this.$dispatch("notify", {
+                    message: response.message || "Có lỗi xảy ra. Vui lòng thử lại.",
+                    type: "error",
+                });
+            });
+    },
       removeItemFromCart() {
         post(this.product.removeUrl)
           .then(result => {
@@ -83,20 +89,78 @@ document.addEventListener("alpine:init", async () => {
           })
       },
       changeQuantity() {
-        post(this.product.updateQuantityUrl, {quantity: product.quantity})
-          .then(result => {
-            this.$dispatch('cart-change', {count: result.count})
-            this.$dispatch("notify", {
-              message: "Số lượng mặt hàng đã được cập nhật",
-            });
-          })
-          .catch(response => {
-            this.$dispatch('notify', {
-              message: response.message || 'Server Error. Please try again.',
-              type: 'error'
+        fetch(product.updateQuantityUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+            },
+            body: JSON.stringify({ quantity: this.product.quantity }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+              this.$dispatch("notify", {
+                message: "Đã cập nhật số lượng thành công.",
+              });
             })
-          })
-      },
+            .catch((error) => console.error("Error:", error));
+    },
+
+    async fetchComments() {
+      try {
+          const response = await fetch(`/products/${this.product.id}/comments`);
+          this.comments = await response.json();
+      } catch (error) {
+          console.error('Lỗi khi tải bình luận:', error);
+      }
+  },
+  async submitComment() {
+    const content = this.$refs.content.value;
+    const rating = this.$refs.rating.value;
+
+    if (!content) {
+        alert('Vui lòng nhập nội dung bình luận.');
+        return;
+    }
+
+    try {
+        const response = await fetch(product.addCommentUrl, {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+          },
+            body: JSON.stringify({
+                product_id: this.product.id,
+                content: content,
+                rating: rating || null
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Lỗi khi gửi bình luận.');
+        }
+
+        const data = await response.json();
+        this.$dispatch("notify", {
+          message: data.message,
+        });
+
+        // Reset form
+        this.$refs.content.value = '';
+        this.$refs.rating.value = '';
+
+        // Reload comments
+        this.fetchComments();
+    } catch (error) {
+        console.error('Lỗi khi gửi bình luận:', error);
+        alert('Không thể gửi bình luận. Vui lòng thử lại.');
+    }
+},
+init() {
+  // Gọi hàm fetchComments khi component được khởi tạo
+  this.fetchComments();
+}
     };
   });
 });

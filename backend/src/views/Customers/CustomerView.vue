@@ -12,7 +12,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
           <div>
-            <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">Billing Address</h2>
+            <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">
+              Địa chỉ thanh toán</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
               <CustomInput v-model="customer.billingAddress.address1" label="Address 1" :errors="errors['billingAddress.address1']"/>
@@ -29,7 +30,7 @@
           </div>
 
           <div>
-            <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">Shipping Address</h2>
+            <h2 class="text-xl font-semibold mt-6 pb-2 border-b border-gray-300">Địa chỉ giao hàng</h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
               <CustomInput v-model="customer.shippingAddress.address1" label="Address 1"
@@ -156,7 +157,7 @@ function onSubmit() {
 onMounted(() => {
   store.dispatch('getCustomer', route.params.id)
     .then(({data}) => {
-      title.value = `Update customer: "${data.first_name} ${data.last_name}"`
+      title.value = `Cập nhật khách hàng: "${data.first_name} ${data.last_name}"`
       customer.value = data
     })
 })

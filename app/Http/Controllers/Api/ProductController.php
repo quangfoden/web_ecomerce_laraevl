@@ -29,10 +29,10 @@ class ProductController extends Controller
         $sortField = request('sort_field', 'created_at');
         $sortDirection = request('sort_direction', 'desc');
 
-        $query = Product::query()
-            ->where('title', 'like', "%{$search}%")
-            ->orderBy($sortField, $sortDirection)
-            ->paginate($perPage);
+        $query = Product::with('sizes')
+        ->where('title', 'like', "%{$search}%")
+        ->orderBy($sortField, $sortDirection)
+        ->paginate($perPage);
 
         return ProductListResource::collection($query);
     }
@@ -53,12 +53,14 @@ class ProductController extends Controller
         $images = $data['images'] ?? [];
         $imagePositions = $data['image_positions'] ?? [];
         $categories = $data['categories'] ?? [];
-
+        $sizes = $data['sizes'] ?? [];
         $product = Product::create($data);
 
         $this->saveCategories($categories, $product);
         $this->saveImages($images, $imagePositions, $product);
-
+        foreach ($sizes as $size) {
+            $product->sizes()->attach($size['id'], ['quantity' => $size['quantity']]);
+        }
         return new ProductResource($product);
     }
 
@@ -70,7 +72,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return new ProductResource($product);
+        return new ProductResource($product->load('sizes'));
     }
 
     /**
@@ -90,7 +92,7 @@ class ProductController extends Controller
         $deletedImages = $data['deleted_images'] ?? [];
         $imagePositions = $data['image_positions'] ?? [];
         $categories = $data['categories'] ?? [];
-
+        $sizes = $data['sizes'] ?? []; 
         $this->saveCategories($categories, $product);
         $this->saveImages($images, $imagePositions, $product);
         if (count($deletedImages) > 0) {
@@ -98,7 +100,11 @@ class ProductController extends Controller
         }
 
         $product->update($data);
-
+        $syncData = [];
+        foreach ($sizes as $size) {
+            $syncData[$size['id']] = ['quantity' => $size['quantity']];
+        }
+        $product->sizes()->sync($syncData);
         return new ProductResource($product);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\News;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -32,22 +33,26 @@ class ProductController extends Controller
     {
         // Lấy danh sách category_id của sản phẩm hiện tại từ bảng trung gian `product_categories`
         $categoryIds = $product->categories()->pluck('categories.id');
-    
+
         // Lấy các sản phẩm liên quan có ít nhất một category chung
         $relatedProducts = Product::whereHas('categories', function ($query) use ($categoryIds) {
-            $query->whereIn('categories.id', $categoryIds); // Thêm prefix 'categories.'
+            $query->whereIn('categories.id', $categoryIds);
         })
-        ->where('products.id', '!=', $product->id) // Thêm prefix 'products.'
-        ->latest()
-        ->take(6)
-        ->get();
+            ->where('products.id', '!=', $product->id)
+            ->latest()
+            ->take(6)
+            ->get();
+
+        // Load sizes của sản phẩm
+        $product->load('sizes');
+
         return view('product.view', [
             'product' => $product,
             'products' => $relatedProducts,
             'title' => "Sản phẩm liên quan"
         ]);
     }
-    
+
 
     private function renderProducts(Builder $query)
     {
@@ -64,17 +69,19 @@ class ProductController extends Controller
             $query->orderBy($sortField, $sortDirection);
         }
         $products = $query
+            ->with('sizes') // Load sizes
             ->where('published', '=', 1)
             ->where(function ($query) use ($search) {
                 /** @var $query \Illuminate\Database\Eloquent\Builder */
                 $query->where('products.title', 'like', "%$search%")
                     ->orWhere('products.description', 'like', "%$search%");
             })
-
             ->paginate(15);
 
+        $news = News::latest()->take(10)->get();
         return view('product.index', [
-            'products' => $products
+            'products' => $products,
+            'news' => $news
         ]);
     }
 }

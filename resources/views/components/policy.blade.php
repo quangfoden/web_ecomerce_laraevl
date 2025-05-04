@@ -1,4 +1,4 @@
-<div class="policy-section"  data-aos="fade-left">
+<div class="policy-section" data-aos="fade-left">
     <div class="policy-box">
         <img src="{{ asset('img/chinhsach/c1.jpg') }}" alt="Giao hàng miễn phí">
         <p>Giao hàng miễn phí toàn quốc, nhanh chóng và đảm bảo.</p>

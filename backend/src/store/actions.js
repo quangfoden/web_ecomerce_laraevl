@@ -91,6 +91,12 @@ export function createProduct({commit}, product) {
     form.append('price', product.price);
     form.append('quantity', product.quantity);
     form.append('_method', 'POST');
+    if (product.sizes && product.sizes.length) {
+      product.sizes.forEach((size, index) => {
+        form.append(`sizes[${index}][id]`, size.id);
+        form.append(`sizes[${index}][quantity]`, size.quantity);
+      });
+    }
     product = form;
   }
   return axiosClient.post('/products', product)
@@ -113,6 +119,12 @@ export function updateProduct({commit}, product) {
     form.append('published', product.published ? 1 : 0);
     form.append('price', product.price);
     form.append('_method', 'PUT');
+    if (product.sizes && product.sizes.length) {
+      product.sizes.forEach((size, index) => {
+        form.append(`sizes[${index}][id]`, size.id);
+        form.append(`sizes[${index}][quantity]`, size.quantity);
+      });
+    }
     product = form;
   } else {
     product._method = 'PUT'

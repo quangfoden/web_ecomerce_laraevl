@@ -43,7 +43,11 @@ class Cart
         $user = $request->user();
         if ($user) {
             return CartItem::where('user_id', $user->id)->get()->map(
-                fn($item) => ['product_id' => $item->product_id, 'quantity' => $item->quantity]
+                fn($item) => [
+                    'product_id' => $item->product_id,
+                    'size_id' => $item->size_id, // Lấy size_id từ giỏ hàng
+                    'quantity' => $item->quantity,
+                ]
             );
         } else {
             return self::getCookieCartItems();
@@ -96,7 +100,7 @@ class Cart
     {
         $cartItems = self::getCartItems();
         $ids = Arr::pluck($cartItems, 'product_id');
-        $products = Product::query()->whereIn('id', $ids)->get();
+        $products = Product::query()->whereIn('id', $ids)->with('sizes')->get(); // Load quan hệ sizes
         $cartItems = Arr::keyBy($cartItems, 'product_id');
 
         return [$products, $cartItems];

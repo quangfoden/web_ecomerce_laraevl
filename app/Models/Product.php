@@ -14,7 +14,7 @@ class Product extends Model
     use HasSlug;
     use SoftDeletes;
 
-    protected $fillable = ['title', 'description','size', 'price', 'quantity', 'published', 'created_by', 'updated_by'];
+    protected $fillable = ['title', 'description', 'price', 'published', 'created_by', 'updated_by'];
 
     /**
      * Get the options for generating the slug.
@@ -44,5 +44,12 @@ class Product extends Model
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    public function sizes()
+    {
+        return $this->belongsToMany(Size::class, 'product_size')
+                    ->withPivot('quantity')
+                    ->withTimestamps();
     }
 }

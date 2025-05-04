@@ -67,7 +67,7 @@ class ProfileController extends Controller
 
         DB::commit();
 
-        $request->session()->flash('flash_message', 'Profile was successfully updated.');
+        $request->session()->flash('flash_message', 'Cập nhật thông tin thành công.');
 
         return redirect()->route('profile');
 

@@ -29,7 +29,7 @@ $categoryList = \App\Models\Category::getActiveAsTree();
         <div class="container">
             <div class="row">
                 <div class="col-sm-6">
-                    <input style="padding: 5px;"
+                    <input style="padding: 5px; border:1px solid #ccc;"
                         x-model="searchKeyword"
                         @input="updateUrl"
                         type="text"
@@ -62,7 +62,7 @@ $categoryList = \App\Models\Category::getActiveAsTree();
     </div>
     @else
     <!-- Danh sách sản phẩm -->
-    <div class="section">
+    <div class="section page-product" style="padding-bottom: 10px !important;">
         <div class="container">
             <div class="row">
                 <div class="col-sm-3">
@@ -81,9 +81,54 @@ $categoryList = \App\Models\Category::getActiveAsTree();
         </div>
     </div>
     <!-- Phân trang -->
-    <div class="text-center p-10 fs-20">
+    <div class="text-center p-20 fs-20">
         {{ $products->appends(['sort' => request('sort'), 'search' => request('search')])->links() }}
     </div>
     @endif
-
+    @include('components.policy')
+    @include('components.product-banner')
+ <!-- News -->
+ <div class="section">
+        <div class="container">
+            <div class="row">
+             <div class="col-12">
+             @include('partials.newslatest', ['news' => $news, 'newstitle' => 'Tin Tức Mới Nhất'])
+             </div>
+        </div>
+    </div>
 </x-app-layout>
+
+
+<script>
+      new Swiper("#newsSwiper", {
+            slidesPerView: 3,
+            spaceBetween: 30,
+            loop: true,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 1,
+                    spaceBetween: 10,
+                },
+                768: {
+                    slidesPerView: 2,
+                    spaceBetween: 20,
+                },
+                1024: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+            autoplay: {
+                delay: 2000,
+                disableOnInteraction: false,
+            },
+        });
+</script>

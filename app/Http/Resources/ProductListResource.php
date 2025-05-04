@@ -19,11 +19,16 @@ class ProductListResource extends JsonResource
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'image_url' => $this->image,
             'price' => $this->price,
-            'size' => $this->size,
-            'quantity' => $this->quantity,
-            'updated_at' => ( new \DateTime($this->updated_at) )->format('Y-m-d H:i:s'),
+            'image_url' => $this->image,
+            'updated_at' => $this->updated_at->format('Y-m-d H:i:s'),
+            'sizes' => $this->sizes->map(function ($size) {
+                return [
+                    'id' => $size->id,
+                    'name' => $size->name,
+                    'quantity' => $size->pivot->quantity,
+                ];
+            }),
         ];
     }
 }

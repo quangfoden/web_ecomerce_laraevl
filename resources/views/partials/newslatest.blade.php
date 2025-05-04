@@ -1,6 +1,6 @@
  <div class="bg-gray-100 py-20" data-aos="fade-up">
         <div class="max-w-7xl mx-auto px-6">
-            <h2 class="box-title">{{$newstitle}}</h2>
+            <h2 class="title text-center box-title">{{$newstitle}}</h2>
             <div id="newsSwiper" class="swiper">
                 <div class="swiper-wrapper">
                     @foreach($news as $article)

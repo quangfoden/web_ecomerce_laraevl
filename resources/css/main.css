@@ -886,8 +886,8 @@ h2.title {
 .productinfo h2{
 	color: #FE980F;
 	font-family: 'Roboto', sans-serif;
-	font-size: 20px;
-	font-weight: 700;
+	font-size: 16px;
+	font-weight: 500;
 }
 .product-overlay h2{
 	color: #fff;
@@ -906,8 +906,11 @@ h2.title {
 
 .productinfo img{
   width: 100%;
+  aspect-ratio: 1/1;
 }
-
+.p-20{
+  padding: 20px 0 !important;
+}
 .productinfo{
  position:relative;
 }

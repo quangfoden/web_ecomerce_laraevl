@@ -26,7 +26,11 @@ class ProductResource extends JsonResource
             'image_url' => $this->image,
             'images' => $this->images,
             'price' => $this->price,
-            'size' => $this->size,
+            'sizes' => $this->sizes->map(fn($size) => [
+                'id' => $size->id,
+                'name' => $size->name,
+                'quantity' => $size->pivot->quantity, // Lấy số lượng từ bảng trung gian
+            ]),
             'quantity' => $this->quantity,
             'published' => (bool)$this->published,
             'categories' => $this->categories->map(fn($c) => $c->id),
