@@ -294,11 +294,11 @@ function sortProducts(field) {
 }
 
 function deleteProduct(product) {
-  if (!confirm(`Are you sure you want to delete the product?`)) {
+  if (!confirm(`bạn chắc chắn xóa chứ?`)) {
     return;
   }
   store.dispatch("deleteProduct", product.id).then((res) => {
-    store.commit("showToast", "Product was successfully deleted");
+    store.commit("showToast", "Xóa thành công.");
     store.dispatch("getProducts");
   });
 }
